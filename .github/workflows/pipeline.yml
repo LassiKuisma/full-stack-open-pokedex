@@ -9,7 +9,19 @@ on:
     types: [opened, synchronize]
 
 jobs:
+  check_for_skip:
+    runs-on: ubuntu-20.04
+    outputs:
+      skip_deploy: ${{ steps.skip_check.outputs.skip_deploy }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: check commit messages for skip
+        id: skip_check
+        env:
+          CONTAINS_SKIP: ${{ contains(join(github.event.commits.*.message), '#skip') }}
+        run: echo "skip_deploy=$CONTAINS_SKIP" >> $GITHUB_OUTPUT
   simple_deployment_pipeline:
+    needs: [check_for_skip]
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -29,14 +41,16 @@ jobs:
           start: npm run start-prod
           wait-on: http://localhost:5000
       - name: Deploy to Render
-        if: ${{ github.event_name == 'push' }}
+        env:
+          SKIP_DEPLOY: ${{ needs.check_for_skip.outputs.skip_deploy }}
+        if: ${{ github.event_name == 'push' && env.SKIP_DEPLOY == 'false'}}
         uses: johnbeynon/render-deploy-action@v0.0.8
         with:
           service-id: ${{ secrets.RENDER_SERVICE_ID }}
           api-key: ${{ secrets.RENDER_API_KEY }}
   tag_release:
-    needs: [simple_deployment_pipeline]
-    if: ${{ github.event_name == 'push' }}
+    needs: [simple_deployment_pipeline, check_for_skip]
+    if: ${{ github.event_name == 'push' && needs.check_for_skip.outputs.skip_deploy == 'false' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
