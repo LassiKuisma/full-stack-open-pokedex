@@ -11,6 +11,7 @@ app.get('/version', (req, res) => {
 })
 
 app.get('/health', (req, res) => {
+  // i have added some random comments here
   res.send('ok')
 })
 
