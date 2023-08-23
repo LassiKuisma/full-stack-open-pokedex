@@ -15,7 +15,7 @@ app.get('/health', (req, res) => {
   res.send('ok')
 })
 // c
-// skip this commit please
+// skip this commit
 
 app.listen(PORT, () => {
   // eslint-disable-next-line no-console
