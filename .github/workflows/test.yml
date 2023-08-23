@@ -14,3 +14,6 @@ jobs:
         env:
           CONTAINS_SKIP: ${{ contains(join(github.event.commits.*.message), '#skip') }}
         run: echo "$CONTAINS_SKIP"
+      - name: do something if not skip
+        if: ${{ env.CONTAINS_SKIP == false }}
+        run: echo "let's deploy or something"
