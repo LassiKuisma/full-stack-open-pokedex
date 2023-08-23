@@ -8,21 +8,24 @@ on:
 jobs:
   a_test_job:
     runs-on: ubuntu-20.04
+    outputs:
+      skip_deploy: ${{ steps.skip_check.outputs.skip_deploy }}
     steps:
       - uses: actions/checkout@v2
-      - name: commit messages
+      - name: check for skip
+        id: skip_check
         env:
           CONTAINS_SKIP: ${{ contains(join(github.event.commits.*.message), '#skip') }}
-        run: echo "SKIP_DEPLOY=$CONTAINS_SKIP" >> $GITHUB_ENV
+        run: echo "skip_deploy=$CONTAINS_SKIP" >> $GITHUB_OUTPUT
       - name: do something if not skip
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
+        if: ${{ env.skip_deploy == 'false' }}
         run: echo "let's deploy or something"
       - name: echo if skip or no skip
-        run: echo "should skip ${{ env.SKIP_DEPLOY }}"
+        run: echo "should skip ${{ env.skip_deploy }}"
   another_job:
     needs: [a_test_job]
     runs-on: ubuntu-20.04
-    if: ${{ env.SKIP_DEPLOY == 'true' }}
+    if: ${{ needs.a_test_job.outputs.skip_deploy == 'true' }}
     steps:
       - name: conditionally do something
         run: echo "this job will skip"
