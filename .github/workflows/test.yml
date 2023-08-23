@@ -19,3 +19,10 @@ jobs:
         run: echo "let's deploy or something"
       - name: echo if skip or no skip
         run: echo "should skip ${{ env.SKIP_DEPLOY }}"
+  another_job:
+    needs: [a_test_job]
+    runs-on: ubuntu-20.04
+    if: ${{ env.SKIP_DEPLOY == 'true' }}
+    steps:
+      - name: conditionally do something
+        run: echo "this job will skip"
