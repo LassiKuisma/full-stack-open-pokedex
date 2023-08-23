@@ -17,3 +17,5 @@ jobs:
       - name: do something if not skip
         if: ${{ env.CONTAINS_SKIP == 'false' }}
         run: echo "let's deploy or something"
+      - name: echo if skip or no skip
+        run: echo "should skip ${{ env.CONTAINS_SKIP }}"
