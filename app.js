@@ -11,6 +11,7 @@ app.get('/version', (req, res) => {
 })
 
 app.get('/health', (req, res) => {
+  // i have added some random comments here
   res.send('ok')
 })
 
@@ -18,3 +19,7 @@ app.listen(PORT, () => {
   // eslint-disable-next-line no-console
   console.log(`server started on port ${PORT}`)
 })
+// more random comments
+// lorem
+// ipsum
+// and so on
