@@ -11,8 +11,19 @@ app.get('/version', (req, res) => {
   res.send('7')
 })
 
+let everythingOk = true
+
 app.get('/health', (req, res) => {
-  res.send('ok')
+  if (everythingOk) {
+    res.send('ok')
+  } else {
+    res.send(500)
+  }
+})
+
+app.post('/togglehealth', (req, res) => {
+  everythingOk = !everythingOk
+  res.json({ health: everythingOk })
 })
 
 app.listen(PORT, () => {
