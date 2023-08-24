@@ -1,0 +1,16 @@
+name: Health check
+
+on:
+  push:
+    branches:
+      - master
+      - health-check
+
+jobs:
+  health_check:
+    runs-on: ubuntu-20.04
+    steps:
+    - name: Echo url
+      run: echo ${{ vars.HEALTH_CHECK_URL }}
+    - name: Echo vars
+      run: echo ${{ vars }}
